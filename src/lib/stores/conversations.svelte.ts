@@ -6,7 +6,17 @@ import {
 	getOrCreateDirectConversation,
 	createGroupConversation as createGroup
 } from '#lib/services/conversations.service';
-import { getMessages as fetchMessages, markRead } from '#lib/services/messages.service';
+import {
+	getMessages as fetchMessages,
+	getMessageById,
+	markRead
+} from '#lib/services/messages.service';
+import {
+	subscribeToAllMessages,
+	subscribeToReactionChanges,
+	subscribeToAllMemberChanges,
+	subscribeToAllConversations
+} from '#lib/services/realtime.service';
 
 const PAGE_SIZE = 40;
 
@@ -121,6 +131,16 @@ export function applyMemberUpdate(conversationId: string, fields: Partial<Conver
 	}
 }
 
+export function applyConversationUpdate(id: string, fields: Partial<Conversation>) {
+	const conv = chat.conversations.find((c) => c.id === id);
+	if (conv) {
+		if (fields.name !== undefined) conv.name = fields.name;
+		if (fields.avatar_url !== undefined) conv.avatar_url = fields.avatar_url;
+		if (fields.description !== undefined) conv.description = fields.description;
+		if (fields.updated_at !== undefined) conv.updated_at = fields.updated_at;
+	}
+}
+
 function sortConversations(list: Conversation[]): Conversation[] {
 	return [...list].sort(
 		(a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
@@ -169,4 +189,81 @@ export async function createGroupConversation(input: {
 export function clearActiveConversation() {
 	chat.activeConversationId = null;
 	chat.messages = [];
+}
+
+let globalChannels: Array<import('@supabase/supabase-js').RealtimeChannel> = [];
+
+export function initRealtime(userId: string) {
+	cleanupRealtime();
+
+	const client = getSupabase();
+
+	const msgChannel = subscribeToAllMessages(async (payload) => {
+		if (payload.eventType === 'INSERT') {
+			const msg = await getMessageById(client, payload.new.id as number);
+			if (msg) applyMessage(msg);
+		} else if (payload.eventType === 'UPDATE') {
+			const n = payload.new;
+			applyMessageUpdate(n.id as number, {
+				content: n.content as string,
+				deleted_at: n.deleted_at as string | null,
+				edited_at: n.edited_at as string | null,
+				file_url: n.file_url as string | null,
+				file_name: n.file_name as string | null,
+				type: n.type as MessageWithSender['type']
+			});
+		} else if (payload.eventType === 'DELETE') {
+			removeMessage(payload.old.id as number);
+		}
+	});
+
+	const reactChannel = subscribeToReactionChanges(async (payload) => {
+		const mid = (payload.new?.message_id ?? payload.old?.message_id) as number | undefined;
+		if (!mid) return;
+		const msg = await getMessageById(client, mid);
+		if (msg) updateMessageLocally(msg);
+	});
+
+	const memberChannel = subscribeToAllMemberChanges(async (payload) => {
+		if (payload.eventType === 'INSERT') {
+			const n = payload.new;
+			if (n.user_id === userId) {
+				await loadConversations(userId);
+			}
+		} else if (payload.eventType === 'UPDATE') {
+			const n = payload.new;
+			applyMemberUpdate(n.conversation_id as string, {
+				user_id: n.user_id as string,
+				last_read_at: n.last_read_at as string,
+				role: n.role as 'owner' | 'admin' | 'member',
+				muted: n.muted as boolean
+			});
+		}
+	});
+
+	const convChannel = subscribeToAllConversations((payload) => {
+		if (payload.eventType === 'UPDATE') {
+			const n = payload.new;
+			applyConversationUpdate(n.id as string, {
+				name: n.name as string | null,
+				avatar_url: n.avatar_url as string | null,
+				description: n.description as string | null,
+				updated_at: n.updated_at as string
+			});
+		}
+	});
+
+	globalChannels = [msgChannel, reactChannel, memberChannel, convChannel];
+
+	return cleanupRealtime;
+}
+
+export function cleanupRealtime() {
+	if (globalChannels.length > 0) {
+		const client = getSupabase();
+		for (const ch of globalChannels) {
+			client.removeChannel(ch);
+		}
+		globalChannels = [];
+	}
 }
