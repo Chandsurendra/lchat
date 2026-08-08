@@ -16,5 +16,11 @@ export default defineConfig({
 			adapter: adapter(),
 			experimental: { remoteFunctions: true }
 		})
-	]
+	],
+	server: {
+		forwardConsole: {
+			unhandledErrors: true,
+			logLevels: ['warn', 'error']
+		}
+	}
 });

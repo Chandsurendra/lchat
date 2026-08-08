@@ -1,3 +1,19 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html,
+body {
+	height: 100%;
+}
+
+body {
+	@apply bg-zinc-100 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: rgb(161 161 170 / 0.5) transparent;
+}
