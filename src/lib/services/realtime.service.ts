@@ -119,3 +119,34 @@ export function setPresenceStatus(
 ) {
 	channel?.track({ status });
 }
+
+export function subscribeToAllMessages(cb: PostgresListener): RealtimeChannel {
+	return getSupabase()
+		.channel('postgres:all_messages')
+		.on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) =>
+			cb(payload as unknown as ChangesPayload)
+		)
+		.subscribe();
+}
+
+export function subscribeToAllMemberChanges(cb: PostgresListener): RealtimeChannel {
+	return getSupabase()
+		.channel('postgres:all_members')
+		.on(
+			'postgres_changes',
+			{ event: '*', schema: 'public', table: 'conversation_members' },
+			(payload) => cb(payload as unknown as ChangesPayload)
+		)
+		.subscribe();
+}
+
+export function subscribeToAllConversations(cb: PostgresListener): RealtimeChannel {
+	return getSupabase()
+		.channel('postgres:all_conversations')
+		.on(
+			'postgres_changes',
+			{ event: 'UPDATE', schema: 'public', table: 'conversations' },
+			(payload) => cb(payload as unknown as ChangesPayload)
+		)
+		.subscribe();
+}

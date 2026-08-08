@@ -1,11 +1,24 @@
 <script lang="ts">
 	import Sidebar from '#lib/components/sidebar/Sidebar.svelte';
 	import { ui, closeSidebar } from '#lib/stores/ui.svelte';
-	import { updatePresence } from '#lib/stores/auth.svelte';
+	import { auth, updatePresence } from '#lib/stores/auth.svelte';
+	import { initRealtime, cleanupRealtime } from '#lib/stores/conversations.svelte';
 	import { cn } from '#lib/utils/cn';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
+
+	$effect(() => {
+		const userId = auth.user?.id;
+		if (userId) {
+			const cleanup = initRealtime(userId);
+			return () => {
+				cleanup();
+			};
+		} else {
+			cleanupRealtime();
+		}
+	});
 
 	onMount(() => {
 		updatePresence('online');

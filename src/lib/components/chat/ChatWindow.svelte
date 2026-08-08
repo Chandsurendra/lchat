@@ -1,29 +1,18 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import type { ChangesPayload } from '#lib/services/realtime.service';
 	import { auth } from '#lib/stores/auth.svelte';
 	import {
 		chat,
 		openConversation,
 		applyMessage,
-		applyMessageUpdate,
-		applyMemberUpdate,
-		removeMessage,
 		updateMessageLocally,
 		markReadNow,
 		loadMore
 	} from '#lib/stores/conversations.svelte';
 	import { toggleSidebar } from '#lib/stores/ui.svelte';
 	import { getSupabase } from '#lib/services/supabase';
+	import { typingChannel, presenceChannel } from '#lib/services/realtime.service';
 	import {
-		subscribeToConversationChanges,
-		subscribeToReactionChanges,
-		subscribeToMemberChanges,
-		typingChannel,
-		presenceChannel
-	} from '#lib/services/realtime.service';
-	import {
-		getMessageById,
 		sendMessage,
 		editMessage,
 		deleteMessage,
@@ -122,9 +111,6 @@
 
 		const client = getSupabase();
 
-		const msgChannel = subscribeToConversationChanges(convId, handlePayload);
-		const reactChannel = subscribeToReactionChanges(handleReaction);
-		const memberChannel = subscribeToMemberChanges(convId, handleMember);
 		const typeChannel = typingChannel(convId, (userId, typing) => {
 			if (userId === uid) return;
 			if (typing) {
@@ -149,9 +135,6 @@
 		return () => {
 			for (const uid of Object.keys(typingUsers)) delete typingUsers[uid];
 			for (const uid of Object.keys(onlineUsers)) delete onlineUsers[uid];
-			client.removeChannel(msgChannel);
-			client.removeChannel(reactChannel);
-			client.removeChannel(memberChannel);
 			client.removeChannel(typeChannel);
 			client.removeChannel(presence);
 		};
@@ -164,43 +147,6 @@
 			queueMicrotask(() => scrollToBottom());
 		}
 	});
-
-	async function handlePayload(payload: ChangesPayload) {
-		const client = getSupabase();
-		if (payload.eventType === 'INSERT') {
-			const msg = await getMessageById(client, payload.new.id as number);
-			if (msg) applyMessage(msg);
-		} else if (payload.eventType === 'UPDATE') {
-			const n = payload.new;
-			applyMessageUpdate(n.id as number, {
-				content: n.content as string,
-				deleted_at: n.deleted_at as string | null,
-				edited_at: n.edited_at as string | null,
-				file_url: n.file_url as string | null,
-				file_name: n.file_name as string | null,
-				type: n.type as MessageWithSender['type']
-			});
-		} else if (payload.eventType === 'DELETE') {
-			removeMessage(payload.old.id as number);
-		}
-	}
-
-	async function handleReaction(payload: ChangesPayload) {
-		const mid = (payload.new?.message_id ?? payload.old?.message_id) as number | undefined;
-		if (!mid) return;
-		const msg = await getMessageById(getSupabase(), mid);
-		if (msg && msg.conversation_id === conversationId) updateMessageLocally(msg);
-	}
-
-	function handleMember(payload: ChangesPayload) {
-		const n = payload.new;
-		applyMemberUpdate(conversationId, {
-			user_id: n.user_id as string,
-			last_read_at: n.last_read_at as string,
-			role: n.role as 'owner' | 'admin' | 'member',
-			muted: n.muted as boolean
-		});
-	}
 
 	// ---- message actions ----
 	async function handleSend(input: {
