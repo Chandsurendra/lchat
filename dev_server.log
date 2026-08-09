@@ -1,0 +1,11 @@
+$ vite dev
+11:09:44 AM [vite] (ssr) connected.
+11:09:44 AM [vite] (client) Forced re-optimization of dependencies
+
+  VITE v8.2.1  ready in 1817 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+[303] GET /
+[200] GET /login
+error: script "dev" exited with code 143

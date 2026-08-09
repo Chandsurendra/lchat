@@ -85,6 +85,22 @@
 	// ---- lightbox ----
 	let lightboxUrl = $state<string | null>(null);
 
+	$effect(() => {
+		if (!lightboxUrl) return;
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				lightboxUrl = null;
+			}
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	});
+
 	// ---- scroll ----
 	let messagesEl = $state<HTMLDivElement | null>(null);
 	let stick = $state(true);

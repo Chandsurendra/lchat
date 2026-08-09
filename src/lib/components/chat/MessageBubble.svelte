@@ -57,6 +57,10 @@
 			byMe: users.includes(auth.user?.id ?? '')
 		}));
 	});
+
+	function closePicker() {
+		showPicker = false;
+	}
 </script>
 
 <div class={cn('group flex w-full items-end gap-2', isOwn ? 'flex-row-reverse' : '')}>
@@ -156,9 +160,13 @@
 		>
 			<div class="relative">
 				<button
-					onclick={() => (showPicker = !showPicker)}
+					onclick={(e) => {
+						e.stopPropagation();
+						showPicker = !showPicker;
+					}}
 					class="flex h-7 w-7 items-center justify-center rounded-full text-sm transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
-					title="React">😊</button
+					title="React"
+					aria-label="Toggle reaction picker">😊</button
 				>
 				{#if showPicker}
 					<EmojiPicker
@@ -166,6 +174,7 @@
 							onReact(msg, e);
 							showPicker = false;
 						}}
+						onClose={closePicker}
 					/>
 				{/if}
 			</div>
@@ -173,6 +182,7 @@
 				onclick={() => onReply(msg)}
 				class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
 				title="Reply"
+				aria-label="Reply to message"
 			>
 				<svg
 					class="h-4 w-4"
@@ -189,6 +199,7 @@
 					onclick={() => onEdit(msg)}
 					class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
 					title="Edit"
+					aria-label="Edit message"
 				>
 					<svg
 						class="h-4 w-4"
@@ -205,6 +216,7 @@
 					onclick={() => onDelete(msg)}
 					class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
 					title="Delete"
+					aria-label="Delete message"
 				>
 					<svg
 						class="h-4 w-4"
