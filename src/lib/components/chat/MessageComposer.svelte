@@ -122,6 +122,10 @@
 		inputEl?.focus();
 	}
 
+	function closeEmoji() {
+		showEmoji = false;
+	}
+
 	function autoGrow() {
 		if (!inputEl) return;
 		inputEl.style.height = 'auto';
@@ -237,19 +241,24 @@
 	<div class="flex items-end gap-1.5">
 		<div class="relative">
 			<button
-				onclick={() => (showEmoji = !showEmoji)}
+				onclick={(e) => {
+					e.stopPropagation();
+					showEmoji = !showEmoji;
+				}}
 				title="Emoji"
+				aria-label="Toggle emoji picker"
 				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 				>😊</button
 			>
 			{#if showEmoji}
-				<EmojiPicker onPick={insertEmoji} />
+				<EmojiPicker onPick={insertEmoji} onClose={closeEmoji} />
 			{/if}
 		</div>
 
 		<label
 			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-			title="Attach"
+			title="Attach file"
+			aria-label="Attach file"
 		>
 			<svg
 				class="h-5 w-5"
@@ -282,6 +291,7 @@
 			<button
 				onclick={submit}
 				title="Send"
+				aria-label="Send message"
 				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
 			>
 				<svg
@@ -298,6 +308,7 @@
 			<button
 				onclick={() => (recording ? stopRecording(false) : startRecording())}
 				title={recording ? 'Stop' : 'Record voice note'}
+				aria-label={recording ? 'Stop voice recording' : 'Record voice note'}
 				class={cn(
 					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition',
 					recording

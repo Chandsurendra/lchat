@@ -46,6 +46,7 @@
 		<button
 			onclick={() => go('/new')}
 			title="Start a new chat"
+			aria-label="Start a new chat"
 			class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
 		>
 			<svg
@@ -198,6 +199,7 @@
 		<button
 			onclick={toggleTheme}
 			title="Toggle theme"
+			aria-label="Toggle theme"
 			class="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 		>
 			{#if theme.dark}
@@ -227,6 +229,7 @@
 		<button
 			onclick={handleSignOut}
 			title="Sign out"
+			aria-label="Sign out"
 			class="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
 		>
 			<svg
