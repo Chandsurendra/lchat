@@ -158,6 +158,8 @@
 				<button
 					onclick={() => (showPicker = !showPicker)}
 					class="flex h-7 w-7 items-center justify-center rounded-full text-sm transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
+					aria-label="Toggle emoji reactions picker"
+					aria-expanded={showPicker}
 					title="React">😊</button
 				>
 				{#if showPicker}
@@ -166,6 +168,7 @@
 							onReact(msg, e);
 							showPicker = false;
 						}}
+						onClose={() => (showPicker = false)}
 					/>
 				{/if}
 			</div>

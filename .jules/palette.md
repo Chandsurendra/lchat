@@ -1,0 +1,4 @@
+## 2025-02-18 - Svelte 5 Reactive EmojiPicker & Keyboard Dismissals
+
+**Learning:** Reactive state controls in Svelte 5 combined with vanilla DOM interaction layers allow clean click-outside and keyboard bindings without heavy libraries. Standard reactive micro-UX components (such as a custom Emoji Picker or Lightbox component) should expose lifecycle events (`onClose`) so parent frames can clean up state instantly. Icon-only components must be complemented by standardized `aria-label` attributes and contextual `aria-expanded` attributes to optimize accessibility with screen-readers.
+**Action:** Always define reactive `$effect` hooks inside overlay/popover components to handle `Escape` key dismissals and document-level click-outside handlers, referencing containing element bounds dynamically.

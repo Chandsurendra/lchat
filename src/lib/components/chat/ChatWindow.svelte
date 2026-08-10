@@ -202,6 +202,25 @@
 		});
 	}
 
+	// ---- Escape key listener ----
+	$effect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			if (e.key === 'Escape') {
+				if (lightboxUrl) {
+					lightboxUrl = null;
+				} else if (editing) {
+					editing = null;
+				} else if (replyTo) {
+					replyTo = null;
+				}
+			}
+		}
+		document.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	});
+
 	// ---- message actions ----
 	async function handleSend(input: {
 		content: string;

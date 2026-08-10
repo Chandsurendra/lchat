@@ -46,6 +46,7 @@
 		<button
 			onclick={() => go('/new')}
 			title="Start a new chat"
+			aria-label="Start a new chat"
 			class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
 		>
 			<svg
@@ -55,6 +56,7 @@
 				stroke="currentColor"
 				stroke-width="2"
 				stroke-linecap="round"
+				aria-hidden="true"
 			>
 				<path d="M12 5v14M5 12h14" />
 			</svg>
@@ -198,6 +200,7 @@
 		<button
 			onclick={toggleTheme}
 			title="Toggle theme"
+			aria-label="Toggle theme"
 			class="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 		>
 			{#if theme.dark}
@@ -208,6 +211,7 @@
 					stroke="currentColor"
 					stroke-width="2"
 					stroke-linecap="round"
+					aria-hidden="true"
 					><circle cx="12" cy="12" r="4" /><path
 						d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
 					/></svg
@@ -220,13 +224,15 @@
 					stroke="currentColor"
 					stroke-width="2"
 					stroke-linecap="round"
-					stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg
+					stroke-linejoin="round"
+					aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg
 				>
 			{/if}
 		</button>
 		<button
 			onclick={handleSignOut}
 			title="Sign out"
+			aria-label="Sign out"
 			class="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
 		>
 			<svg
@@ -237,6 +243,7 @@
 				stroke-width="2"
 				stroke-linecap="round"
 				stroke-linejoin="round"
+				aria-hidden="true"
 				><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path
 					d="M16 17l5-5-5-5M21 12H9"
 				/></svg
