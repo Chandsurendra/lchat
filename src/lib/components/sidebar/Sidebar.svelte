@@ -126,6 +126,7 @@
 		{:else}
 			{#each filtered as conv (conv.id)}
 				{@const other = getOtherParticipant(conv, auth.user?.id ?? '')}
+				{@const title = conversationTitle(conv, auth.user?.id ?? '')}
 				<button
 					onclick={() => go(`/chat/${conv.id}`)}
 					class={cn(
@@ -137,15 +138,13 @@
 				>
 					<Avatar
 						src={conv.type === 'group' ? conv.avatar_url : other?.profile.avatar_url}
-						name={conversationTitle(conv, auth.user?.id ?? '')}
+						name={title}
 						size={40}
 						status={conv.type === 'direct' ? other?.profile.status : undefined}
 					/>
 					<div class="min-w-0 flex-1">
 						<div class="flex items-baseline justify-between gap-2">
-							<span class="truncate text-sm font-semibold"
-								>{conversationTitle(conv, auth.user?.id ?? '')}</span
-							>
+							<span class="truncate text-sm font-semibold">{title}</span>
 							{#if conv.last_message}
 								<span class="shrink-0 text-[11px] text-zinc-400"
 									>{timeAgo(conv.last_message.created_at)}</span
