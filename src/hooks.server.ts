@@ -25,9 +25,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	});
 
-	return resolve(event, {
+	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range' || name === 'x-supabase-api-version';
 		}
 	});
+
+	// Security Headers (Defense in Depth / Clickjacking / MIME-sniffing protection)
+	response.headers.set('X-Frame-Options', 'DENY');
+	response.headers.set('X-Content-Type-Options', 'nosniff');
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+	return response;
 };
