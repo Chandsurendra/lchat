@@ -156,7 +156,10 @@
 		>
 			<div class="relative">
 				<button
-					onclick={() => (showPicker = !showPicker)}
+					onclick={(e) => {
+						e.stopPropagation();
+						showPicker = !showPicker;
+					}}
 					class="flex h-7 w-7 items-center justify-center rounded-full text-sm transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
 					title="React">😊</button
 				>
@@ -166,6 +169,7 @@
 							onReact(msg, e);
 							showPicker = false;
 						}}
+						onClose={() => (showPicker = false)}
 					/>
 				{/if}
 			</div>

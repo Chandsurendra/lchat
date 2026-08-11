@@ -237,13 +237,16 @@
 	<div class="flex items-end gap-1.5">
 		<div class="relative">
 			<button
-				onclick={() => (showEmoji = !showEmoji)}
+				onclick={(e) => {
+					e.stopPropagation();
+					showEmoji = !showEmoji;
+				}}
 				title="Emoji"
 				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 				>😊</button
 			>
 			{#if showEmoji}
-				<EmojiPicker onPick={insertEmoji} />
+				<EmojiPicker onPick={insertEmoji} onClose={() => (showEmoji = false)} />
 			{/if}
 		</div>
 
