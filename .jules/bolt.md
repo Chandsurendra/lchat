@@ -1,0 +1,5 @@
+## 2025-03-01 - Avoid O(N) Array Searches inside Component-level `$derived` runes
+**Learning:** Performing a linear search (`array.find()`) inside a component-level `$derived` rune to find a matching element (e.g. parent message for replied message) causes O(N²) overall complexity when the store array is mutated because every component re-runs its derived lookup on the full array.
+Using a store-level `$derived` record/map to pre-index the array in O(N) time once allows all component instances to perform lookups in O(1) time, bringing overall complexity down to O(N).
+Furthermore, Svelte 5's ESLint rules (`svelte/prefer-svelte-reactivity`) warn against returning raw `Map` instances in reactive scopes. Using a lightweight, plain JavaScript `Record` object instead of a Map completely avoids lint warnings while keeping lookup operations extremely fast.
+**Action:** When components need to reference or lookup other items from a collection inside a reactive context, pre-index the collection into a `Record` at the store/parent level instead of doing nested searches.

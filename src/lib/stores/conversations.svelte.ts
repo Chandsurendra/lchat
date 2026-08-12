@@ -21,6 +21,15 @@ export const chat = $state({
 	error: null as string | null
 });
 
+// Performance Optimization: build a derived record indexing messages by their ID to make parent message lookup O(1)
+export const messagesById = $derived.by(() => {
+	const record: Record<number, MessageWithSender> = {};
+	for (const m of chat.messages) {
+		record[m.id] = m;
+	}
+	return record;
+});
+
 export async function loadConversations(userId: string) {
 	chat.loadingConversations = true;
 	chat.error = null;

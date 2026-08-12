@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { MessageWithSender, Participant } from '#lib/types';
-	import { chat } from '#lib/stores/conversations.svelte';
+	import { messagesById } from '#lib/stores/conversations.svelte';
 	import { auth } from '#lib/stores/auth.svelte';
 	import Avatar from '#lib/components/ui/Avatar.svelte';
 	import AttachmentPreview from './AttachmentPreview.svelte';
@@ -34,9 +34,8 @@
 
 	let showPicker = $state(false);
 
-	const replyMsg = $derived(
-		msg.parent_id ? chat.messages.find((m) => m.id === msg.parent_id) : null
-	);
+	// Performance Optimization: use O(1) messagesById lookup instead of O(N) array search
+	const replyMsg = $derived(msg.parent_id ? messagesById[msg.parent_id] : null);
 	const isDeleted = $derived(msg.deleted_at !== null);
 	const seen = $derived(isOwn && !isGroup && !!other && msg.created_at <= other.last_read_at);
 
