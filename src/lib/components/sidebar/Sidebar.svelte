@@ -46,7 +46,8 @@
 		<button
 			onclick={() => go('/new')}
 			title="Start a new chat"
-			class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
+			aria-label="Start a new chat"
+			class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:outline-none"
 		>
 			<svg
 				class="h-5 w-5"
@@ -188,7 +189,12 @@
 	</div>
 
 	<div class="flex items-center gap-3 border-t border-zinc-200 px-4 py-3 dark:border-zinc-800">
-		<button onclick={() => go('/settings')} title="Edit profile" class="shrink-0">
+		<button
+			onclick={() => go('/settings')}
+			title="Edit profile"
+			aria-label="Edit profile"
+			class="shrink-0 rounded-full focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+		>
 			<Avatar src={auth.profile?.avatar_url} name={auth.profile?.display_name ?? '?'} size={36} />
 		</button>
 		<div class="min-w-0 flex-1">
@@ -198,7 +204,8 @@
 		<button
 			onclick={toggleTheme}
 			title="Toggle theme"
-			class="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+			aria-label="Toggle theme"
+			class="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:text-zinc-400 dark:hover:bg-zinc-800"
 		>
 			{#if theme.dark}
 				<svg
@@ -227,7 +234,8 @@
 		<button
 			onclick={handleSignOut}
 			title="Sign out"
-			class="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
+			aria-label="Sign out"
+			class="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none dark:hover:bg-red-950"
 		>
 			<svg
 				class="h-4 w-4"

@@ -123,7 +123,7 @@
 					<button
 						onclick={() => onReact(msg, r.emoji)}
 						class={cn(
-							'rounded-full border px-2 py-0.5 text-xs transition',
+							'rounded-full border px-2 py-0.5 text-xs transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none',
 							r.byMe
 								? 'border-indigo-300 bg-indigo-100 dark:border-indigo-700 dark:bg-indigo-950'
 								: 'border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800'
@@ -157,8 +157,9 @@
 			<div class="relative">
 				<button
 					onclick={() => (showPicker = !showPicker)}
-					class="flex h-7 w-7 items-center justify-center rounded-full text-sm transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
-					title="React">😊</button
+					class="flex h-7 w-7 items-center justify-center rounded-full text-sm transition hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:hover:bg-zinc-700"
+					title="React"
+					aria-label="React with emoji">😊</button
 				>
 				{#if showPicker}
 					<EmojiPicker
@@ -171,8 +172,9 @@
 			</div>
 			<button
 				onclick={() => onReply(msg)}
-				class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
+				class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:hover:bg-zinc-700"
 				title="Reply"
+				aria-label="Reply to message"
 			>
 				<svg
 					class="h-4 w-4"
@@ -187,8 +189,9 @@
 			{#if isOwn}
 				<button
 					onclick={() => onEdit(msg)}
-					class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-zinc-100 dark:hover:bg-zinc-700"
+					class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:hover:bg-zinc-700"
 					title="Edit"
+					aria-label="Edit message"
 				>
 					<svg
 						class="h-4 w-4"
@@ -203,8 +206,9 @@
 				</button>
 				<button
 					onclick={() => onDelete(msg)}
-					class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
+					class="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none dark:hover:bg-red-950"
 					title="Delete"
+					aria-label="Delete message"
 				>
 					<svg
 						class="h-4 w-4"
