@@ -25,9 +25,18 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	});
 
-	return resolve(event, {
+	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range' || name === 'x-supabase-api-version';
 		}
 	});
+
+	// Security: Inject defense-in-depth HTTP headers to protect against Clickjacking, MIME sniffing, and unauthorized hardware access
+	response.headers.set('X-Frame-Options', 'DENY');
+	response.headers.set('X-Content-Type-Options', 'nosniff');
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	response.headers.set('Permissions-Policy', 'geolocation=(), camera=(), microphone=()');
+	response.headers.set('X-XSS-Protection', '1; mode=block');
+
+	return response;
 };
