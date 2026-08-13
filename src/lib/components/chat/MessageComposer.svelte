@@ -183,7 +183,9 @@
 					onCancelEdit();
 					text = '';
 				}}
-				class="ml-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">✕</button
+				aria-label="Cancel editing"
+				class="ml-2 rounded-sm text-zinc-400 hover:text-zinc-600 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:hover:text-zinc-200"
+				>✕</button
 			>
 		</div>
 	{:else if replyTo}
@@ -196,7 +198,9 @@
 			</span>
 			<button
 				onclick={() => (replyTo = null)}
-				class="ml-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">✕</button
+				aria-label="Cancel reply"
+				class="ml-2 rounded-sm text-zinc-400 hover:text-zinc-600 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none dark:hover:text-zinc-200"
+				>✕</button
 			>
 		</div>
 	{/if}
@@ -210,7 +214,10 @@
 					<span>{file.type.startsWith('image/') ? '🖼️' : '📎'}</span>
 					<span class="max-w-40 truncate">{file.name}</span>
 					<span class="text-zinc-400">{formatBytes(file.size)}</span>
-					<button onclick={() => removeAttachment(i)} class="text-zinc-400 hover:text-red-500"
+					<button
+						onclick={() => removeAttachment(i)}
+						aria-label="Remove attachment"
+						class="rounded-sm text-zinc-400 hover:text-red-500 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none"
 						>✕</button
 					>
 				</div>
@@ -224,12 +231,15 @@
 		>
 			<span class="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500"></span>
 			<span>Recording… {recTime}s</span>
-			<button onclick={() => stopRecording(false)} class="ml-auto font-medium hover:underline"
+			<button
+				onclick={() => stopRecording(false)}
+				class="ml-auto rounded font-medium hover:underline focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-offset-zinc-900"
 				>Cancel</button
 			>
 			<button
 				onclick={() => stopRecording(true)}
-				class="rounded-md bg-red-600 px-3 py-1 font-medium text-white hover:bg-red-500">Send</button
+				class="rounded-md bg-red-600 px-3 py-1 font-medium text-white hover:bg-red-500 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-offset-zinc-900"
+				>Send</button
 			>
 		</div>
 	{/if}
@@ -239,7 +249,8 @@
 			<button
 				onclick={() => (showEmoji = !showEmoji)}
 				title="Emoji"
-				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+				aria-label="Select emoji"
+				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:text-zinc-400 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-900"
 				>😊</button
 			>
 			{#if showEmoji}
@@ -248,8 +259,9 @@
 		</div>
 
 		<label
-			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:outline-none hover:bg-zinc-100 dark:text-zinc-400 dark:focus-within:ring-offset-zinc-900 dark:hover:bg-zinc-800"
 			title="Attach"
+			aria-label="Attach file"
 		>
 			<svg
 				class="h-5 w-5"
@@ -263,7 +275,7 @@
 					d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
 				/></svg
 			>
-			<input type="file" multiple class="hidden" onchange={onFiles} />
+			<input type="file" multiple class="sr-only" onchange={onFiles} aria-label="Attach files" />
 		</label>
 
 		<textarea
@@ -282,7 +294,8 @@
 			<button
 				onclick={submit}
 				title="Send"
-				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
+				aria-label="Send message"
+				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-offset-zinc-900"
 			>
 				<svg
 					class="h-5 w-5"
@@ -298,8 +311,9 @@
 			<button
 				onclick={() => (recording ? stopRecording(false) : startRecording())}
 				title={recording ? 'Stop' : 'Record voice note'}
+				aria-label={recording ? 'Stop recording' : 'Record voice note'}
 				class={cn(
-					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition',
+					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-offset-zinc-900',
 					recording
 						? 'bg-red-600 text-white'
 						: 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
