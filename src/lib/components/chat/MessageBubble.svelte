@@ -34,9 +34,10 @@
 
 	let showPicker = $state(false);
 
-	const replyMsg = $derived(
-		msg.parent_id ? chat.messages.find((m) => m.id === msg.parent_id) : null
-	);
+	// PERFORMANCE OPTIMIZATION:
+	// Uses the O(1) chat.messageMap lookup record instead of O(N) array search,
+	// reducing overall mutations/rendering complexity of all message bubbles to O(N) from O(N^2).
+	const replyMsg = $derived(msg.parent_id ? chat.messageMap[msg.parent_id] : null);
 	const isDeleted = $derived(msg.deleted_at !== null);
 	const seen = $derived(isOwn && !isGroup && !!other && msg.created_at <= other.last_read_at);
 

@@ -18,7 +18,20 @@ export const chat = $state({
 	loadingConversations: true,
 	loadingMessages: false,
 	hasMore: true,
-	error: null as string | null
+	error: null as string | null,
+
+	/**
+	 * PERFORMANCE OPTIMIZATION:
+	 * Returns an O(1) lookup record mapping message IDs to messages.
+	 * This prevents nested linear searches (O(N^2)) when looking up reply messages in components.
+	 */
+	get messageMap() {
+		const map: Record<number, MessageWithSender> = {};
+		for (const m of this.messages) {
+			map[m.id] = m;
+		}
+		return map;
+	}
 });
 
 export async function loadConversations(userId: string) {
