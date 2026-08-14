@@ -1,3 +1,4 @@
+import { dev } from '$app/env';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$app/env/public';
 import { createServerClient } from '@supabase/ssr';
 import type { Handle } from '@sveltejs/kit';
@@ -25,9 +26,66 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	});
 
-	return resolve(event, {
+	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range' || name === 'x-supabase-api-version';
 		}
 	});
+
+	// Get Supabase host & WS scheme for CSP dynamically and safely
+	let supabaseHost = '';
+	let supabaseWsHost = '';
+	try {
+		if (PUBLIC_SUPABASE_URL) {
+			const url = new URL(PUBLIC_SUPABASE_URL);
+			supabaseHost = url.host;
+			supabaseWsHost = (url.protocol === 'https:' ? 'wss://' : 'ws://') + url.host;
+		}
+	} catch {
+		// Fallback gracefully during build/test environments where PUBLIC_SUPABASE_URL might be dummy or absent
+	}
+
+	const connectSrc = [
+		"'self'",
+		supabaseHost ? `https://${supabaseHost}` : '',
+		supabaseWsHost ? supabaseWsHost : ''
+	]
+		.filter(Boolean)
+		.join(' ');
+
+	const imgSrc = [
+		"'self'",
+		'data:',
+		'blob:',
+		'https://*.googleusercontent.com',
+		supabaseHost ? `https://${supabaseHost}` : ''
+	]
+		.filter(Boolean)
+		.join(' ');
+
+	const scriptSrc = ["'self'", "'unsafe-inline'", dev ? "'unsafe-eval'" : '']
+		.filter(Boolean)
+		.join(' ');
+
+	const csp = [
+		"default-src 'self'",
+		`connect-src ${connectSrc}`,
+		`img-src ${imgSrc}`,
+		`script-src ${scriptSrc}`,
+		"style-src 'self' 'unsafe-inline'",
+		"font-src 'self' data:",
+		"object-src 'none'",
+		"base-uri 'self'",
+		"form-action 'self'",
+		"frame-ancestors 'none'"
+	].join('; ');
+
+	// Security Headers
+	response.headers.set('Content-Security-Policy', csp);
+	response.headers.set('X-Frame-Options', 'DENY');
+	response.headers.set('X-Content-Type-Options', 'nosniff');
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
+	return response;
 };
