@@ -106,7 +106,9 @@
 				Profile
 			</h2>
 			<div class="mb-5 flex flex-col items-center gap-2">
-				<label class="group cursor-pointer">
+				<label
+					class="group cursor-pointer rounded-full p-1 transition focus-within:ring-2 focus-within:ring-indigo-500"
+				>
 					<div class="relative">
 						<Avatar
 							src={avatarPreview ?? auth.profile?.avatar_url}
@@ -118,7 +120,7 @@
 							>📷</span
 						>
 					</div>
-					<input type="file" accept="image/*" class="hidden" onchange={onAvatar} />
+					<input type="file" accept="image/*" class="sr-only" onchange={onAvatar} />
 				</label>
 				<p class="text-xs text-zinc-400">Click avatar to change</p>
 			</div>
