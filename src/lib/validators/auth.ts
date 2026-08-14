@@ -2,7 +2,10 @@ import { z } from 'zod';
 import { USERNAME_REGEX } from '#lib/utils/constants';
 
 export const emailSchema = z.string().email('Enter a valid email address');
-export const passwordSchema = z.string().min(8, 'Password must be at least 8 characters');
+export const passwordSchema = z
+	.string()
+	.min(8, 'Password must be at least 8 characters')
+	.max(72, 'Password must be under 72 characters');
 
 export const loginSchema = z.object({
 	email: emailSchema,
