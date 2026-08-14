@@ -239,6 +239,7 @@
 			<button
 				onclick={() => (showEmoji = !showEmoji)}
 				title="Emoji"
+				aria-label="Select emoji"
 				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 				>😊</button
 			>
@@ -248,8 +249,9 @@
 		</div>
 
 		<label
-			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition focus-within:ring-2 focus-within:ring-indigo-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 			title="Attach"
+			aria-label="Attach file"
 		>
 			<svg
 				class="h-5 w-5"
@@ -263,7 +265,7 @@
 					d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
 				/></svg
 			>
-			<input type="file" multiple class="hidden" onchange={onFiles} />
+			<input type="file" multiple class="sr-only" onchange={onFiles} aria-label="Upload files" />
 		</label>
 
 		<textarea
@@ -282,6 +284,7 @@
 			<button
 				onclick={submit}
 				title="Send"
+				aria-label="Send message"
 				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
 			>
 				<svg
@@ -298,6 +301,7 @@
 			<button
 				onclick={() => (recording ? stopRecording(false) : startRecording())}
 				title={recording ? 'Stop' : 'Record voice note'}
+				aria-label={recording ? 'Stop voice recording' : 'Record voice note'}
 				class={cn(
 					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition',
 					recording

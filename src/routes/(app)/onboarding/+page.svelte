@@ -85,7 +85,9 @@
 		<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">How should people see you on LChat?</p>
 
 		<div class="mt-6 flex flex-col items-center gap-3">
-			<label class="group cursor-pointer">
+			<label
+				class="group cursor-pointer rounded-full p-1 transition focus-within:ring-2 focus-within:ring-indigo-500"
+			>
 				<div class="relative">
 					<Avatar src={avatarPreview} name={displayName || '?'} size={88} />
 					<span
@@ -93,7 +95,7 @@
 						>📷</span
 					>
 				</div>
-				<input type="file" accept="image/*" class="hidden" onchange={onAvatar} />
+				<input type="file" accept="image/*" class="sr-only" onchange={onAvatar} />
 			</label>
 			<p class="text-xs text-zinc-400">Click to upload an avatar</p>
 		</div>
