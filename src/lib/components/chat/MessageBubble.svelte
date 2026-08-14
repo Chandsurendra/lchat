@@ -34,9 +34,10 @@
 
 	let showPicker = $state(false);
 
-	const replyMsg = $derived(
-		msg.parent_id ? chat.messages.find((m) => m.id === msg.parent_id) : null
-	);
+	// Perform O(1) reactive lookup on chat.messagesMap to find the reply message.
+	// This avoids an O(N) linear search on the messages array inside this $derived rune
+	// for each message bubble instance (resulting in O(N^2) complexity total on store updates).
+	const replyMsg = $derived(msg.parent_id ? (chat.messagesMap[msg.parent_id] ?? null) : null);
 	const isDeleted = $derived(msg.deleted_at !== null);
 	const seen = $derived(isOwn && !isGroup && !!other && msg.created_at <= other.last_read_at);
 
