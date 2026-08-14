@@ -18,7 +18,18 @@ export const chat = $state({
 	loadingConversations: true,
 	loadingMessages: false,
 	hasMore: true,
-	error: null as string | null
+	error: null as string | null,
+	// A reactive getter acting as an O(1) index map of messages.
+	// In Svelte 5, getters defined inside $state are reactive (like $derived)
+	// when referencing other reactive properties (such as chat.messages).
+	// Using a plain object Record instead of Map prevents Svelte prefer-svelte-reactivity warnings.
+	get messagesMap(): Record<number, MessageWithSender> {
+		const map: Record<number, MessageWithSender> = {};
+		for (const m of this.messages) {
+			map[m.id] = m;
+		}
+		return map;
+	}
 });
 
 export async function loadConversations(userId: string) {
