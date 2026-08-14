@@ -1,3 +1,7 @@
+## 2026-08-07 - missing security response headers in sveltekit hooks
+**Vulnerability:** Complete absence of defense-in-depth security HTTP headers, exposing the application to clickjacking attacks, MIME-type confusion/sniffing, and unconstrained hardware capabilities/APIs (such as geolocation, camera, or microphone) inside server-rendered pages.
+**Learning:** SvelteKit does not automatically set strict default security headers for server-rendered HTML pages unless explicitly configured in server-side handles (`hooks.server.ts`). This is a surprising security gap in the architecture for developers assuming SvelteKit's built-in router handles HTTP hardening out of the box.
+**Prevention:** Always intercept resolved responses in `hooks.server.ts` to manually apply robust security response headers (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, and `X-XSS-Protection`).
 # Sentinel Journal 🛡️
 
 ## 2026-08-10 - Password Hashing CPU Exhaustion Mitigation

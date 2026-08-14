@@ -31,10 +31,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	});
 
-	// Security Headers (Defense in Depth / Clickjacking / MIME-sniffing protection)
+	// Security: Inject defense-in-depth HTTP headers to protect against Clickjacking, MIME sniffing, and unauthorized hardware access
 	response.headers.set('X-Frame-Options', 'DENY');
 	response.headers.set('X-Content-Type-Options', 'nosniff');
 	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	response.headers.set('Permissions-Policy', 'geolocation=(), camera=(), microphone=()');
+	response.headers.set('X-XSS-Protection', '1; mode=block');
 
 	return response;
 };
