@@ -1,5 +1,27 @@
 import { describe, test, expect } from 'bun:test';
-import { sanitizeExtension } from './storage.service';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { sanitizeExtension, uploadAvatar } from './storage.service';
+import { MAX_AVATAR_BYTES } from '../utils/constants';
+
+describe('uploadAvatar validation', () => {
+	test('should reject files exceeding MAX_AVATAR_BYTES', async () => {
+		const mockClient = {} as unknown as SupabaseClient;
+		const largeFile = new File([new Uint8Array(MAX_AVATAR_BYTES + 1)], 'avatar.png', {
+			type: 'image/png'
+		});
+		const result = await uploadAvatar(mockClient, 'user123', largeFile);
+		expect(result).toBeNull();
+	});
+
+	test('should reject non-image MIME types', async () => {
+		const mockClient = {} as unknown as SupabaseClient;
+		const execFile = new File(['echo hello'], 'script.sh', {
+			type: 'application/x-sh'
+		});
+		const result = await uploadAvatar(mockClient, 'user123', execFile);
+		expect(result).toBeNull();
+	});
+});
 
 describe('sanitizeExtension', () => {
 	test('should return normal extension for standard filenames', () => {
