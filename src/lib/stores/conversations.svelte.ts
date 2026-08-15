@@ -116,8 +116,18 @@ export function applyMemberUpdate(conversationId: string, fields: Partial<Conver
 		if (fields.role) conv.participants[idx].role = fields.role;
 		if (fields.muted !== undefined) conv.participants[idx].muted = fields.muted;
 	}
-	if (fields.user_id === chat.activeUserId && fields.last_read_at) {
-		conv.my_member.last_read_at = fields.last_read_at;
+	if (fields.user_id === chat.activeUserId) {
+		if (fields.last_read_at) conv.my_member.last_read_at = fields.last_read_at;
+		if (fields.muted !== undefined) conv.my_member.muted = fields.muted;
+	}
+}
+
+export function updateConversationLocally(conversationId: string, fields: Partial<Conversation>) {
+	const conv = chat.conversations.find((c) => c.id === conversationId);
+	if (conv) {
+		if (fields.name !== undefined) conv.name = fields.name;
+		if (fields.description !== undefined) conv.description = fields.description;
+		if (fields.avatar_url !== undefined) conv.avatar_url = fields.avatar_url;
 	}
 }
 

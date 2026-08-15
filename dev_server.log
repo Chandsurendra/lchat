@@ -1,0 +1,13 @@
+$ vite dev
+Found issues while validating tsconfig.json
+  - "paths" was overwritten. Imports from "#lib" may not typecheck
+12:20:50 PM [vite] (ssr) connected.
+12:20:50 PM [vite] (client) Forced re-optimization of dependencies
+
+  VITE v8.2.1  ready in 2058 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+12:22:46 PM [vite] changed tsconfig file detected: /app/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+12:23:31 PM [vite] changed tsconfig file detected: /app/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+12:24:27 PM [vite] changed tsconfig file detected: /app/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
