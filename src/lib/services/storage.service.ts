@@ -1,6 +1,11 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../database.types';
-import { ATTACHMENT_BUCKET, AVATAR_BUCKET, MAX_UPLOAD_BYTES } from '../utils/constants';
+import {
+	ATTACHMENT_BUCKET,
+	AVATAR_BUCKET,
+	MAX_AVATAR_BYTES,
+	MAX_UPLOAD_BYTES
+} from '../utils/constants';
 
 type Client = SupabaseClient<Database>;
 
@@ -27,6 +32,7 @@ export async function uploadAvatar(
 	userId: string,
 	file: File
 ): Promise<string | null> {
+	if (file.size > MAX_AVATAR_BYTES || !file.type.startsWith('image/')) return null;
 	const ext = sanitizeExtension(file.name, 'jpg');
 	const path = `${userId}/${crypto.randomUUID()}.${ext}`;
 	const { error } = await client.storage
