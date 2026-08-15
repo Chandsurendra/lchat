@@ -47,10 +47,24 @@ export async function getConversations(client: Client, userId: string): Promise<
 	const lastMessages = (lastMessagesRes.data ?? []) as Array<MessageRow & { sender?: ProfileRow }>;
 	const unreadMap = new Map((unreadRes.data ?? []).map((u) => [u.conversation_id, u.unread_count]));
 
+	// Bolt ⚡ Optimization: Pre-group members and index last messages into Maps for O(1) lookups
+	// avoiding O(M * N) filter and O(M^2) find operations inside the loop.
+	const membersByConvId = new Map<string, MemberRow[]>();
+	for (const member of allMembers) {
+		let list = membersByConvId.get(member.conversation_id);
+		if (!list) {
+			list = [];
+			membersByConvId.set(member.conversation_id, list);
+		}
+		list.push(member);
+	}
+
+	const lastMessagesMap = new Map(lastMessages.map((msg) => [msg.conversation_id, msg]));
+
 	return members
 		.map((m) => {
 			const conv = m.conversation!;
-			const convMembers = allMembers.filter((x) => x.conversation_id === conv.id);
+			const convMembers = membersByConvId.get(conv.id) ?? [];
 			const participants: Participant[] = convMembers.map((x) => ({
 				user_id: x.user_id,
 				role: x.role,
@@ -58,7 +72,7 @@ export async function getConversations(client: Client, userId: string): Promise<
 				last_read_at: x.last_read_at,
 				profile: x.profile!
 			}));
-			const last = lastMessages.find((l) => l.conversation_id === conv.id);
+			const last = lastMessagesMap.get(conv.id);
 			return {
 				...conv,
 				participants,
@@ -76,7 +90,7 @@ export async function getConversations(client: Client, userId: string): Promise<
 				typing: []
 			} satisfies Conversation;
 		})
-		.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+		.sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at));
 }
 
 export function getOtherParticipant(
