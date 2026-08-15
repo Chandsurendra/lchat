@@ -1,3 +1,4 @@
+import { dev } from '$app/env';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$app/env/public';
 import { createServerClient } from '@supabase/ssr';
 import type { Handle } from '@sveltejs/kit';
@@ -31,36 +32,60 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	});
 
-	// Secure response headers (Defense-in-depth)
-	response.headers.set('X-Frame-Options', 'DENY');
-	response.headers.set('X-Content-Type-Options', 'nosniff');
-	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-	response.headers.set('Permissions-Policy', 'camera=(), geolocation=(), microphone=(self)');
-
-	// Build a robust, restrictive Content Security Policy (CSP)
-	let supabaseDomain = '';
-	let wsSupabaseDomain = '';
+	// Get Supabase host & WS scheme for CSP dynamically and safely
+	let supabaseHost = '';
+	let supabaseWsHost = '';
 	try {
 		if (PUBLIC_SUPABASE_URL) {
-			const parsed = new URL(PUBLIC_SUPABASE_URL);
-			supabaseDomain = parsed.origin;
-			wsSupabaseDomain = parsed.origin.replace('https://', 'wss://').replace('http://', 'ws://');
+			const url = new URL(PUBLIC_SUPABASE_URL);
+			supabaseHost = url.host;
+			supabaseWsHost = (url.protocol === 'https:' ? 'wss://' : 'ws://') + url.host;
 		}
 	} catch {
-		// Fallback in case of invalid URL or during compilation
+		// Fallback gracefully during build/test environments where PUBLIC_SUPABASE_URL might be dummy or absent
 	}
+
+	const connectSrc = [
+		"'self'",
+		supabaseHost ? `https://${supabaseHost}` : '',
+		supabaseWsHost ? supabaseWsHost : ''
+	]
+		.filter(Boolean)
+		.join(' ');
+
+	const imgSrc = [
+		"'self'",
+		'data:',
+		'blob:',
+		'https://*.googleusercontent.com',
+		supabaseHost ? `https://${supabaseHost}` : ''
+	]
+		.filter(Boolean)
+		.join(' ');
+
+	const scriptSrc = ["'self'", "'unsafe-inline'", dev ? "'unsafe-eval'" : '']
+		.filter(Boolean)
+		.join(' ');
 
 	const csp = [
 		"default-src 'self'",
-		"script-src 'self' 'unsafe-inline'", // Necessary for Svelte's reactive runtime
-		"style-src 'self' 'unsafe-inline'", // Necessary for Tailwind/Svelte styled components
-		`img-src 'self' data: blob: ${supabaseDomain}`.trim(),
-		`media-src 'self' blob: ${supabaseDomain}`.trim(),
-		`connect-src 'self' ${supabaseDomain} ${wsSupabaseDomain}`.trim(),
+		`connect-src ${connectSrc}`,
+		`img-src ${imgSrc}`,
+		`script-src ${scriptSrc}`,
+		"style-src 'self' 'unsafe-inline'",
+		"font-src 'self' data:",
+		"object-src 'none'",
+		"base-uri 'self'",
+		"form-action 'self'",
 		"frame-ancestors 'none'"
 	].join('; ');
 
+	// Security Headers
 	response.headers.set('Content-Security-Policy', csp);
+	response.headers.set('X-Frame-Options', 'DENY');
+	response.headers.set('X-Content-Type-Options', 'nosniff');
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
 	return response;
 };
