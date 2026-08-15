@@ -179,6 +179,8 @@
 		>
 			<span class="truncate"><span class="font-medium">Editing:</span> {editing.content}</span>
 			<button
+				type="button"
+				aria-label="Cancel editing"
 				onclick={() => {
 					onCancelEdit();
 					text = '';
@@ -195,6 +197,8 @@
 				{replyTo.content || '📎 attachment'}
 			</span>
 			<button
+				type="button"
+				aria-label="Cancel reply"
 				onclick={() => (replyTo = null)}
 				class="ml-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">✕</button
 			>
@@ -207,11 +211,14 @@
 				<div
 					class="relative flex items-center gap-2 rounded-lg border border-zinc-200 px-2.5 py-1.5 text-xs dark:border-zinc-700"
 				>
-					<span>{file.type.startsWith('image/') ? '🖼️' : '📎'}</span>
+					<span aria-hidden="true">{file.type.startsWith('image/') ? '🖼️' : '📎'}</span>
 					<span class="max-w-40 truncate">{file.name}</span>
 					<span class="text-zinc-400">{formatBytes(file.size)}</span>
-					<button onclick={() => removeAttachment(i)} class="text-zinc-400 hover:text-red-500"
-						>✕</button
+					<button
+						type="button"
+						aria-label={`Remove attachment ${file.name}`}
+						onclick={() => removeAttachment(i)}
+						class="text-zinc-400 hover:text-red-500">✕</button
 					>
 				</div>
 			{/each}
@@ -222,12 +229,15 @@
 		<div
 			class="mb-2 flex items-center gap-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400"
 		>
-			<span class="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500"></span>
+			<span class="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" aria-hidden="true"></span>
 			<span>Recording… {recTime}s</span>
-			<button onclick={() => stopRecording(false)} class="ml-auto font-medium hover:underline"
-				>Cancel</button
+			<button
+				type="button"
+				onclick={() => stopRecording(false)}
+				class="ml-auto font-medium hover:underline">Cancel</button
 			>
 			<button
+				type="button"
 				onclick={() => stopRecording(true)}
 				class="rounded-md bg-red-600 px-3 py-1 font-medium text-white hover:bg-red-500">Send</button
 			>
@@ -237,9 +247,11 @@
 	<div class="flex items-end gap-1.5">
 		<div class="relative">
 			<button
+				type="button"
+				aria-label="Choose emoji"
 				onclick={() => (showEmoji = !showEmoji)}
 				title="Emoji"
-				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800"
 				>😊</button
 			>
 			{#if showEmoji}
@@ -248,7 +260,7 @@
 		</div>
 
 		<label
-			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-1 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 			title="Attach"
 		>
 			<svg
@@ -259,11 +271,12 @@
 				stroke-width="2"
 				stroke-linecap="round"
 				stroke-linejoin="round"
+				aria-hidden="true"
 				><path
 					d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
 				/></svg
 			>
-			<input type="file" multiple class="hidden" onchange={onFiles} />
+			<input type="file" multiple class="sr-only" onchange={onFiles} aria-label="Attach files" />
 		</label>
 
 		<textarea
@@ -273,6 +286,7 @@
 			onkeydown={onKeydown}
 			rows="1"
 			placeholder={editing ? 'Edit message…' : 'Type a message…'}
+			aria-label={editing ? 'Edit message' : 'Type a message'}
 			class="max-h-[140px] min-h-[40px] flex-1 resize-none rounded-2xl border-zinc-200 bg-zinc-100 px-4 py-2.5 text-sm focus:border-indigo-400 focus:ring-indigo-400 dark:border-zinc-700 dark:bg-zinc-800"
 		></textarea>
 
@@ -280,9 +294,11 @@
 			<div></div>
 		{:else if text.trim() || attachments.length > 0 || editing}
 			<button
+				type="button"
+				aria-label="Send message"
 				onclick={submit}
 				title="Send"
-				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
+				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500"
 			>
 				<svg
 					class="h-5 w-5"
@@ -291,15 +307,18 @@
 					stroke="currentColor"
 					stroke-width="2"
 					stroke-linecap="round"
-					stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg
+					stroke-linejoin="round"
+					aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg
 				>
 			</button>
 		{:else}
 			<button
+				type="button"
+				aria-label={recording ? 'Stop recording voice note' : 'Record voice note'}
 				onclick={() => (recording ? stopRecording(false) : startRecording())}
 				title={recording ? 'Stop' : 'Record voice note'}
 				class={cn(
-					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition',
+					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition focus-visible:ring-2 focus-visible:ring-indigo-500',
 					recording
 						? 'bg-red-600 text-white'
 						: 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
@@ -313,6 +332,7 @@
 					stroke-width="2"
 					stroke-linecap="round"
 					stroke-linejoin="round"
+					aria-hidden="true"
 					><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path
 						d="M19 10v2a7 7 0 0 1-14 0v-2"
 					/><line x1="12" x2="12" y1="19" y2="22" /></svg
