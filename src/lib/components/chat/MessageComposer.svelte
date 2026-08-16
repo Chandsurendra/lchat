@@ -183,7 +183,9 @@
 					onCancelEdit();
 					text = '';
 				}}
-				class="ml-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">✕</button
+				aria-label="Cancel editing"
+				class="ml-2 text-zinc-400 hover:text-zinc-600 focus-visible:rounded focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:hover:text-zinc-200"
+				>✕</button
 			>
 		</div>
 	{:else if replyTo}
@@ -196,7 +198,9 @@
 			</span>
 			<button
 				onclick={() => (replyTo = null)}
-				class="ml-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">✕</button
+				aria-label="Cancel replying"
+				class="ml-2 text-zinc-400 hover:text-zinc-600 focus-visible:rounded focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:hover:text-zinc-200"
+				>✕</button
 			>
 		</div>
 	{/if}
@@ -210,7 +214,10 @@
 					<span>{file.type.startsWith('image/') ? '🖼️' : '📎'}</span>
 					<span class="max-w-40 truncate">{file.name}</span>
 					<span class="text-zinc-400">{formatBytes(file.size)}</span>
-					<button onclick={() => removeAttachment(i)} class="text-zinc-400 hover:text-red-500"
+					<button
+						onclick={() => removeAttachment(i)}
+						aria-label="Remove attachment {file.name}"
+						class="text-zinc-400 hover:text-red-500 focus-visible:rounded focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
 						>✕</button
 					>
 				</div>
@@ -238,8 +245,9 @@
 		<div class="relative">
 			<button
 				onclick={() => (showEmoji = !showEmoji)}
-				title="Emoji"
-				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+				title="Emoji picker"
+				aria-label="Emoji picker"
+				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:text-zinc-400 dark:hover:bg-zinc-800"
 				>😊</button
 			>
 			{#if showEmoji}
@@ -248,8 +256,8 @@
 		</div>
 
 		<label
-			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-			title="Attach"
+			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition focus-within:ring-2 focus-within:ring-indigo-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+			title="Attach files"
 		>
 			<svg
 				class="h-5 w-5"
@@ -263,7 +271,7 @@
 					d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
 				/></svg
 			>
-			<input type="file" multiple class="hidden" onchange={onFiles} />
+			<input type="file" multiple aria-label="Attach files" class="sr-only" onchange={onFiles} />
 		</label>
 
 		<textarea
@@ -272,8 +280,9 @@
 			oninput={emitTyping}
 			onkeydown={onKeydown}
 			rows="1"
+			aria-label="Message text"
 			placeholder={editing ? 'Edit message…' : 'Type a message…'}
-			class="max-h-[140px] min-h-[40px] flex-1 resize-none rounded-2xl border-zinc-200 bg-zinc-100 px-4 py-2.5 text-sm focus:border-indigo-400 focus:ring-indigo-400 dark:border-zinc-700 dark:bg-zinc-800"
+			class="max-h-[140px] min-h-[40px] flex-1 resize-none rounded-2xl border-zinc-200 bg-zinc-100 px-4 py-2.5 text-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800"
 		></textarea>
 
 		{#if recording}
@@ -281,8 +290,9 @@
 		{:else if text.trim() || attachments.length > 0 || editing}
 			<button
 				onclick={submit}
-				title="Send"
-				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
+				title="Send message"
+				aria-label="Send message"
+				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:outline-none"
 			>
 				<svg
 					class="h-5 w-5"
@@ -297,9 +307,10 @@
 		{:else}
 			<button
 				onclick={() => (recording ? stopRecording(false) : startRecording())}
-				title={recording ? 'Stop' : 'Record voice note'}
+				title={recording ? 'Stop recording' : 'Record voice note'}
+				aria-label={recording ? 'Stop recording' : 'Record voice note'}
 				class={cn(
-					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition',
+					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none',
 					recording
 						? 'bg-red-600 text-white'
 						: 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
