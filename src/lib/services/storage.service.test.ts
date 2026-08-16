@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'bun:test';
-import { sanitizeExtension } from './storage.service';
+import { sanitizeExtension, uploadAvatar, uploadAttachment } from './storage.service';
+import { MAX_UPLOAD_BYTES } from '../utils/constants';
 
 describe('sanitizeExtension', () => {
 	test('should return normal extension for standard filenames', () => {
@@ -36,5 +37,27 @@ describe('sanitizeExtension', () => {
 
 	test('should enforce strict length limits on the extension', () => {
 		expect(sanitizeExtension('file.extremelylongextensionnamehere', 'bin')).toBe('extremelyl');
+	});
+});
+
+describe('uploadAvatar size limits', () => {
+	test('should reject avatar files exceeding MAX_UPLOAD_BYTES', async () => {
+		const oversizedFile = new File(['a'.repeat(MAX_UPLOAD_BYTES + 1)], 'avatar.png', {
+			type: 'image/png'
+		});
+		const fakeClient = {} as unknown as Parameters<typeof uploadAvatar>[0];
+		const result = await uploadAvatar(fakeClient, 'user123', oversizedFile);
+		expect(result).toBeNull();
+	});
+});
+
+describe('uploadAttachment size limits', () => {
+	test('should reject attachment files exceeding MAX_UPLOAD_BYTES', async () => {
+		const oversizedFile = new File(['a'.repeat(MAX_UPLOAD_BYTES + 1)], 'attachment.bin', {
+			type: 'application/octet-stream'
+		});
+		const fakeClient = {} as unknown as Parameters<typeof uploadAttachment>[0];
+		const result = await uploadAttachment(fakeClient, 'user123', oversizedFile);
+		expect(result).toBeNull();
 	});
 });

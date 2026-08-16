@@ -27,6 +27,7 @@ export async function uploadAvatar(
 	userId: string,
 	file: File
 ): Promise<string | null> {
+	if (file.size > MAX_UPLOAD_BYTES) return null;
 	const ext = sanitizeExtension(file.name, 'jpg');
 	const path = `${userId}/${crypto.randomUUID()}.${ext}`;
 	const { error } = await client.storage
