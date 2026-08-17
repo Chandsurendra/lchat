@@ -1,6 +1,7 @@
 export function timeAgo(date: string | Date): string {
-	const then = typeof date === 'string' ? new Date(date) : date;
-	const seconds = Math.floor((Date.now() - then.getTime()) / 1000);
+	// Use Date.parse() or .getTime() directly to compute timestamp without Date instantiation
+	const timestamp = typeof date === 'string' ? Date.parse(date) : date.getTime();
+	const seconds = Math.floor((Date.now() - timestamp) / 1000);
 	if (seconds < 45) return 'now';
 	const minutes = Math.floor(seconds / 60);
 	if (minutes < 60) return `${minutes}m ago`;
@@ -8,7 +9,7 @@ export function timeAgo(date: string | Date): string {
 	if (hours < 24) return `${hours}h ago`;
 	const days = Math.floor(hours / 24);
 	if (days < 7) return `${days}d ago`;
-	return formatDate(then);
+	return formatDate(typeof date === 'string' ? new Date(timestamp) : date);
 }
 
 export function formatTime(date: string | Date): string {
