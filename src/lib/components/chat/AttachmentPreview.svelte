@@ -46,7 +46,7 @@
 		<a
 			href={msg.file_url}
 			target="_blank"
-			rel="noreferrer"
+			rel="noopener noreferrer"
 			class="flex max-w-xs items-center gap-3 rounded-xl border border-black/10 bg-white/10 px-3 py-2.5 dark:border-white/10"
 		>
 			<span
