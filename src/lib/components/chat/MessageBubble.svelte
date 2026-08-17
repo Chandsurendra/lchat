@@ -103,7 +103,7 @@
 								<a
 									href={part.url}
 									target="_blank"
-									rel="noreferrer"
+									rel="noopener noreferrer"
 									class="underline decoration-current/40 underline-offset-2">{part.text}</a
 								>
 							{:else}
