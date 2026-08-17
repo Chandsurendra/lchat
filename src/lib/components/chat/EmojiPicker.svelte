@@ -53,7 +53,9 @@
 		{#each EMOJIS as emoji (emoji)}
 			<button
 				onclick={() => onPick(emoji)}
-				class="rounded p-1 text-xl transition hover:bg-zinc-100 dark:hover:bg-zinc-800"
+				aria-label={emoji}
+				title={emoji}
+				class="rounded p-1 text-xl transition outline-none hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:bg-zinc-800"
 			>
 				{emoji}
 			</button>
