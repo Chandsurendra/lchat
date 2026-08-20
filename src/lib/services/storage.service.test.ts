@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'bun:test';
-import { sanitizeExtension } from './storage.service';
+import { sanitizeExtension, uploadAvatar, uploadAttachment } from './storage.service';
+import { MAX_UPLOAD_BYTES } from '../utils/constants';
 
 describe('sanitizeExtension', () => {
 	test('should return normal extension for standard filenames', () => {
@@ -36,5 +37,25 @@ describe('sanitizeExtension', () => {
 
 	test('should enforce strict length limits on the extension', () => {
 		expect(sanitizeExtension('file.extremelylongextensionnamehere', 'bin')).toBe('extremelyl');
+	});
+});
+
+describe('upload file size limits', () => {
+	const mockClient = {} as unknown as Parameters<typeof uploadAvatar>[0];
+
+	test('uploadAvatar should return null for files exceeding MAX_UPLOAD_BYTES', async () => {
+		const oversizedFile = new File([''], 'big_avatar.png', { type: 'image/png' });
+		Object.defineProperty(oversizedFile, 'size', { value: MAX_UPLOAD_BYTES + 1 });
+
+		const result = await uploadAvatar(mockClient, 'user123', oversizedFile);
+		expect(result).toBeNull();
+	});
+
+	test('uploadAttachment should return null for files exceeding MAX_UPLOAD_BYTES', async () => {
+		const oversizedFile = new File([''], 'big_file.zip', { type: 'application/zip' });
+		Object.defineProperty(oversizedFile, 'size', { value: MAX_UPLOAD_BYTES + 1 });
+
+		const result = await uploadAttachment(mockClient, 'user123', oversizedFile);
+		expect(result).toBeNull();
 	});
 });
