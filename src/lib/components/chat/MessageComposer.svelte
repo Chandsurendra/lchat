@@ -183,6 +183,7 @@
 					onCancelEdit();
 					text = '';
 				}}
+				aria-label="Cancel editing message"
 				class="ml-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">✕</button
 			>
 		</div>
@@ -196,6 +197,7 @@
 			</span>
 			<button
 				onclick={() => (replyTo = null)}
+				aria-label="Cancel reply"
 				class="ml-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">✕</button
 			>
 		</div>
@@ -210,8 +212,10 @@
 					<span>{file.type.startsWith('image/') ? '🖼️' : '📎'}</span>
 					<span class="max-w-40 truncate">{file.name}</span>
 					<span class="text-zinc-400">{formatBytes(file.size)}</span>
-					<button onclick={() => removeAttachment(i)} class="text-zinc-400 hover:text-red-500"
-						>✕</button
+					<button
+						onclick={() => removeAttachment(i)}
+						aria-label="Remove attachment {file.name}"
+						class="text-zinc-400 hover:text-red-500">✕</button
 					>
 				</div>
 			{/each}
@@ -239,6 +243,8 @@
 			<button
 				onclick={() => (showEmoji = !showEmoji)}
 				title="Emoji"
+				aria-label="Choose emoji"
+				aria-expanded={showEmoji}
 				class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 				>😊</button
 			>
@@ -248,7 +254,7 @@
 		</div>
 
 		<label
-			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+			class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition focus-within:ring-2 focus-within:ring-indigo-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
 			title="Attach"
 		>
 			<svg
@@ -263,7 +269,7 @@
 					d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"
 				/></svg
 			>
-			<input type="file" multiple class="hidden" onchange={onFiles} />
+			<input type="file" multiple aria-label="Attach file" class="sr-only" onchange={onFiles} />
 		</label>
 
 		<textarea
@@ -272,6 +278,7 @@
 			oninput={emitTyping}
 			onkeydown={onKeydown}
 			rows="1"
+			aria-label={editing ? 'Edit message' : 'Type a message'}
 			placeholder={editing ? 'Edit message…' : 'Type a message…'}
 			class="max-h-[140px] min-h-[40px] flex-1 resize-none rounded-2xl border-zinc-200 bg-zinc-100 px-4 py-2.5 text-sm focus:border-indigo-400 focus:ring-indigo-400 dark:border-zinc-700 dark:bg-zinc-800"
 		></textarea>
@@ -282,6 +289,7 @@
 			<button
 				onclick={submit}
 				title="Send"
+				aria-label="Send message"
 				class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500"
 			>
 				<svg
@@ -298,6 +306,7 @@
 			<button
 				onclick={() => (recording ? stopRecording(false) : startRecording())}
 				title={recording ? 'Stop' : 'Record voice note'}
+				aria-label={recording ? 'Stop voice recording' : 'Record voice note'}
 				class={cn(
 					'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition',
 					recording
