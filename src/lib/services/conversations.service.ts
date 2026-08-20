@@ -47,36 +47,52 @@ export async function getConversations(client: Client, userId: string): Promise<
 	const lastMessages = (lastMessagesRes.data ?? []) as Array<MessageRow & { sender?: ProfileRow }>;
 	const unreadMap = new Map((unreadRes.data ?? []).map((u) => [u.conversation_id, u.unread_count]));
 
-	return members
-		.map((m) => {
-			const conv = m.conversation!;
-			const convMembers = allMembers.filter((x) => x.conversation_id === conv.id);
-			const participants: Participant[] = convMembers.map((x) => ({
-				user_id: x.user_id,
-				role: x.role,
-				muted: x.muted,
-				last_read_at: x.last_read_at,
-				profile: x.profile!
-			}));
-			const last = lastMessages.find((l) => l.conversation_id === conv.id);
-			return {
-				...conv,
-				participants,
-				my_member: {
-					id: m.id,
-					conversation_id: m.conversation_id,
-					user_id: m.user_id,
-					role: m.role,
-					last_read_at: m.last_read_at,
-					muted: m.muted,
-					created_at: m.created_at
-				},
-				last_message: last ? { ...last, sender: last.sender!, reactions: [] } : null,
-				unread_count: unreadMap.get(conv.id) ?? 0,
-				typing: []
-			} satisfies Conversation;
-		})
-		.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+	// Index members and last messages by conversation_id for O(1) lookups
+	const membersMap = new Map<string, MemberRow[]>();
+	for (const m of allMembers) {
+		const list = membersMap.get(m.conversation_id);
+		if (list) list.push(m);
+		else membersMap.set(m.conversation_id, [m]);
+	}
+
+	const lastMessageMap = new Map<string, MessageRow & { sender?: ProfileRow }>();
+	for (const l of lastMessages) {
+		lastMessageMap.set(l.conversation_id, l);
+	}
+
+	return (
+		members
+			.map((m) => {
+				const conv = m.conversation!;
+				const convMembers = membersMap.get(conv.id) ?? [];
+				const participants: Participant[] = convMembers.map((x) => ({
+					user_id: x.user_id,
+					role: x.role,
+					muted: x.muted,
+					last_read_at: x.last_read_at,
+					profile: x.profile!
+				}));
+				const last = lastMessageMap.get(conv.id);
+				return {
+					...conv,
+					participants,
+					my_member: {
+						id: m.id,
+						conversation_id: m.conversation_id,
+						user_id: m.user_id,
+						role: m.role,
+						last_read_at: m.last_read_at,
+						muted: m.muted,
+						created_at: m.created_at
+					},
+					last_message: last ? { ...last, sender: last.sender!, reactions: [] } : null,
+					unread_count: unreadMap.get(conv.id) ?? 0,
+					typing: []
+				} satisfies Conversation;
+			})
+			// Use Date.parse() instead of new Date() to avoid memory allocations during sort comparisons
+			.sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at))
+	);
 }
 
 export function getOtherParticipant(
