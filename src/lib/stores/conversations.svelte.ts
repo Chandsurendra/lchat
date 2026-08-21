@@ -122,9 +122,8 @@ export function applyMemberUpdate(conversationId: string, fields: Partial<Conver
 }
 
 function sortConversations(list: Conversation[]): Conversation[] {
-	return [...list].sort(
-		(a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-	);
+	// Use Date.parse to avoid allocating Date instances during comparison
+	return [...list].sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at));
 }
 
 export async function markReadNow(conversationId: string, messageId: number) {
